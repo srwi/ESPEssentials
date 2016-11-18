@@ -1,0 +1,11 @@
+{
+  "name": "ESPEssentials",
+  "description": "Essentials for the ESP8266",
+  "frameworks": "arduino",
+  "platforms": "*",
+  "authors":
+  {
+    "name": "stnkl",
+    "maintainer": true
+  }
+}
