@@ -88,9 +88,7 @@ void WebServerClass::handleWifiCredentials()
 	if (hasArg("SSID")/* && hasArg("PASSPHRASE")*/)
 	{
 		send(404, "text/plain", "The device will now restart...");
-		Config.set("ssid", String(arg("SSID")));
-		Config.set("passphrase" , String(arg("PASSPHRASE")));
-		Config.save();
+		Wifi.saveCredentials(String(arg("SSID")), String(arg("PASSPHRASE")));
 		Serial.println("[Wifi] Got new credentials through AP:");
 		Serial.println("\tSSID: " + arg("SSID"));
 		Serial.println("\tPassphrase: " + arg("PASSPHRASE"));

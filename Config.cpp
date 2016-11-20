@@ -1,4 +1,4 @@
-#include "Config.h"
+/*#include "Config.h"
 
 bool ConfigClass::init()
 {
@@ -149,4 +149,4 @@ bool ConfigClass::contains(String name)
 	return false;
 }
 
-ConfigClass Config;
+ConfigClass Config;*/

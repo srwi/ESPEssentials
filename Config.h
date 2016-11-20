@@ -1,4 +1,4 @@
-#ifndef _CONFIG_H_471412218
+/*#ifndef _CONFIG_H_471412218
 #define _CONFIG_H_471412218
 
 #include <Arduino.h>
@@ -32,4 +32,4 @@ class ConfigClass
 
 extern ConfigClass Config;
 
-#endif
+#endif*/
