@@ -19,8 +19,16 @@ void WebServerClass::init()
 	
 	on("/edit", HTTP_GET, [&]()
 	{
-		if(!handleFileRead("/edit.htm"))
-			send(404, "text/plain", "Oops, file not found!");
+		//if(!handleFileRead("/edit.htm"))
+		//{
+			String content = "<form method=\"post\" enctype=\"multipart/form-data\">";
+			content += "<label>Select the edit.htm file, upload it and then open /edit.htm so upload other files.";
+			content += "<input name=\"datei\" type=\"file\">";
+			content += "</label>";
+			content += "<button>Upload!</button>";
+			content += "</form>";
+			send(200, "text/html", content);
+		//}
 	});
 	on("/edit", HTTP_PUT, _handle_file_create);
 	on("/edit", HTTP_DELETE, _handle_file_delete);
