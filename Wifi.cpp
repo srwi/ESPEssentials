@@ -7,11 +7,11 @@ WifiClass::WifiClass()
 
 bool WifiClass::connect(String ssid, String passphrase)
 {
-	/*if(isConnected())
+	if(status() == WL_CONNECTED)
 	{
 		Serial.println("[Wifi] Wifi already connected");
 		return true;
-	}*/
+	}
 
 	Serial.printf("[Wifi] Connecting to \"%s\"...", ssid.c_str());
 
@@ -35,7 +35,7 @@ bool WifiClass::connect(String ssid, String passphrase)
 		}
 	}
 
-	if(isConnected())
+	if(status() == WL_CONNECTED)
 	{
 		Serial.println("ok!");
 		Serial.print("[Wifi] IP Address: ");
@@ -54,6 +54,8 @@ bool WifiClass::createAP(char *ap_name)
 {
 	Serial.print("[Wifi] Starting access point...");
 
+	WiFi.mode(WIFI_AP_STA);
+	
 	if(ap_connected = WiFi.softAP(ap_name))
 	{
 		Serial.println("ok!");
@@ -87,35 +89,63 @@ void WifiClass::forceRemoveCredentials()
 	ESP.flashEraseSector(0x3fe);
 }
 
-bool WifiClass::saveCredentials(String ssid, String passphrase)
+void WifiClass::saveCredentials(String ssid, String passphrase)
 {
-	StaticJsonBuffer<JSON_OBJECT_SIZE(5)> jsonBuffer;
+	EEPROM.begin(64);
+
+	// Read two EEPROM strings with length 32
+	for(int i = 0; i < 32; i++)
+	{
+		EEPROM.write(0 + i, ssid[i]); // ssid_address = 0
+	}
+	for(int i = 0; i < 32; i++)
+	{
+		EEPROM.write(32 + i, passphrase[i]); // passphrase_address = 32
+	}
+	EEPROM.commit();
+
+	/*StaticJsonBuffer<JSON_OBJECT_SIZE(5)> jsonBuffer;
 	JsonObject& root = jsonBuffer.createObject();
 
 	root["ssid"] = ssid;
 	root["passphrase"] = passphrase;
 
-	String json = "";
-	root.prettyPrintTo(json);
-
 	File configFile = SPIFFS.open(config_filename, "w");
 	if(!configFile)
 	{
-		Serial.println("[Config] Opening file " + config_filename + " for saving wifi credentials failed.");
+		Serial.println("[Config] Opening file \'" + config_filename + "\' for saving wifi credentials failed.");
 		return false;
 	}
 
-	configFile.println(json);
-	configFile.close();
+	root.prettyPrintTo(configFile);
 
-	return true;
+	return true;*/
 }
 
 WifiCredentials WifiClass::loadCredentials()
 {
-	if (!SPIFFS.begin())
+	EEPROM.begin(64);
+	WifiCredentials credentials;
+
+	// Read two EEPROM strings with length 32
+	for(int i = 0; i < 32; i++)
+	{
+		credentials.ssid += char(EEPROM.read(0 + i)); // ssid_address = 0
+	}
+	for(int i = 0; i < 32; i++)
+	{
+		credentials.passphrase += char(EEPROM.read(32 + i)); // passphrase_address = 32
+	}
+
+	Serial.println(credentials.ssid);
+	Serial.println(credentials.passphrase);
+
+	return credentials;
+
+	/*if (!SPIFFS.begin())
 	{
 		Serial.println("[Wifi] Couldn't mount file system to read wifi credentials.");
+		return WifiCredentials { "", "" };
 	}
 
 	File configFile = SPIFFS.open(config_filename, "r");
@@ -125,22 +155,35 @@ WifiCredentials WifiClass::loadCredentials()
 		return WifiCredentials { "", "" };
 	}
 	
-	String content;
+  size_t size = configFile.size();
+	//Serial.println("Size: " +size);
+
+  std::unique_ptr<char[]> buf(new char[size]);
+  configFile.readBytes(buf.get(), size);
+  StaticJsonBuffer<200> jsonBuffer;
+  JsonObject& root = jsonBuffer.parseObject(buf.get());
+  if (!root.success()) {
+    Serial.println("Failed to parse config file");
+  }
+	/*String content;
 	if(configFile.available())
 		content = configFile.readString();
-	configFile.close();
+	configFile.close();*/
+/*
+	//char json[content.length()];
+	//content.toCharArray(json, content.length());
 
-	char json[content.length()];
-	content.toCharArray(json, content.length());
-
-	StaticJsonBuffer<JSON_OBJECT_SIZE(5)> jsonBuffer;
-	JsonObject& root = jsonBuffer.parseObject(json);
+	//StaticJsonBuffer<JSON_OBJECT_SIZE(5)> jsonBuffer;
+	//JsonObject& root = jsonBuffer.parseObject(json);
 
 	WifiCredentials credentials;
 	credentials.ssid = root["ssid"].asString();
 	credentials.passphrase = root["passphrase"].asString();
 
-	return credentials;
+	Serial.println(credentials.ssid);
+	Serial.println(credentials.passphrase);
+
+	return credentials;*/
 }
 
 WifiClass Wifi;

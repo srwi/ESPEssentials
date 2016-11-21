@@ -30,6 +30,7 @@ void WebServerClass::init()
 	{
 		on("/", [&]()
 		{
+			Serial.println("[AP] Requested wifi credentials form");
 			String content = "<html><body><form action='/wifi_credentials' method='POST'>Please enter new wifi credentials:<br>";
 			content += "<input type='text' name='SSID' placeholder='Network Name'><br>";
 			content += "<input type='password' name='PASSPHRASE' placeholder='Password'><br>";
