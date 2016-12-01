@@ -7,7 +7,7 @@
 #include <FS.h>
 #include <EEPROM.h>
 
-#define WIFI_CONNECT_MAX_ATTEMPTS 3
+#define WIFI_CONNECT_MAX_ATTEMPTS 1
 #define WIFI_CONNECT_RETRY_TIMEOUT 1000
 
 struct WifiCredentials

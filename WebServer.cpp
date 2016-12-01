@@ -19,16 +19,16 @@ void WebServerClass::init()
 	
 	on("/edit", HTTP_GET, [&]()
 	{
-		//if(!handleFileRead("/edit.htm"))
-		//{
-			String content = "<form method=\"post\" enctype=\"multipart/form-data\">";
-			content += "<label>Select the edit.htm file, upload it and then open /edit.htm so upload other files.";
-			content += "<input name=\"datei\" type=\"file\">";
-			content += "</label>";
-			content += "<button>Upload!</button>";
-			content += "</form>";
+		if(!handleFileRead("/edit.htm"))
+		{
+			String content	=	"<form method='post' enctype='multipart/form-data'>";
+			content			+=		"<label>Upload a file to SPIFFS:";
+			content			+=			"<input name='datei' type='file'>";
+			content			+=		"</label>";
+			content			+=		"<button>Upload!</button>";
+			content			+=	"</form>";
 			send(200, "text/html", content);
-		//}
+		}
 	});
 	on("/edit", HTTP_PUT, _handle_file_create);
 	on("/edit", HTTP_DELETE, _handle_file_delete);
@@ -36,13 +36,15 @@ void WebServerClass::init()
 	on("/list", HTTP_GET, _handle_file_list);
 	if(Wifi.isAP())
 	{
+		Serial.println("[WebServer] Sendung credential input form.");
 		on("/", [&]()
 		{
-			Serial.println("[AP] Requested wifi credentials form");
-			String content = "<html><body><form action='/wifi_credentials' method='POST'>Please enter new wifi credentials:<br>";
-			content += "<input type='text' name='SSID' placeholder='Network Name'><br>";
-			content += "<input type='password' name='PASSPHRASE' placeholder='Password'><br>";
-			content += "<input type='submit' name='SUBMIT' value='Save and restart!'></form>";
+			String content	=	"<form action='/wifi_credentials' method='POST'>";
+			content			+=		"Please enter new wifi credentials:<br>";
+			content			+=		"<input type='text' name='SSID' placeholder='Network Name'><br>";
+			content			+=		"<input type='password' name='PASSPHRASE' placeholder='Password'><br>";
+			content			+=		"<input type='submit' name='SUBMIT' value='Save and connect!'>";
+			content			+=	"</form>";
 			send(200, "text/html", content);
 		});
 		on("/wifi_credentials", _handle_wifi_credentials);
@@ -77,7 +79,6 @@ String WebServerClass::getContentType(String filename)
 	if(hasArg("download")) return "application/octet-stream";
 	else if(filename.endsWith(".htm")) return "text/html";
 	else if(filename.endsWith(".html")) return "text/html";
-	else if(filename.endsWith(".conf")) return "text/html";
 	else if(filename.endsWith(".css")) return "text/css";
 	else if(filename.endsWith(".js")) return "application/javascript";
 	else if(filename.endsWith(".png")) return "image/png";
@@ -129,10 +130,6 @@ bool WebServerClass::handleFileRead(String path)
 
 		return true;
 	}
-
-	File file = SPIFFS.open(path, "r");
-	size_t sent = streamFile(file, contentType);
-	file.close();
 
 	return false;
 }
