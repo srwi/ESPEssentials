@@ -122,9 +122,6 @@ WifiCredentials WifiClass::loadCredentials()
 		credentials.passphrase += char(EEPROM.read(32 + i)); // passphrase_address = 32
 	}
 
-	Serial.println(credentials.ssid);
-	Serial.println(credentials.passphrase);
-
 	return credentials;
 }
 

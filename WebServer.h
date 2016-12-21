@@ -6,14 +6,13 @@
 #include <ESP8266WebServer.h>
 #include <FS.h>
 #include "Wifi.h"
-#include "Config.h"
 
 class WebServerClass : public ESP8266WebServer
 {
 	public:
 		WebServerClass(int port);
 		void init();
-		void handle(); // TODO: needed?
+		bool handleFileRead(String path);
 
 	private:
 		File fsUploadFile;
@@ -25,7 +24,6 @@ class WebServerClass : public ESP8266WebServer
 
 		String formatBytes(size_t bytes);
 		String getContentType(String filename);
-		bool handleFileRead(String path);
 		void handleFileUpload();
 		void handleFileDelete();
 		void handleFileCreate();
