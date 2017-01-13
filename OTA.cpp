@@ -9,7 +9,7 @@ void OTAClass::init(char *hostname, char *password, uint16_t port)
 	}
 
 	if(hostname != "")
-    	setHostname(hostname);
+		setHostname(hostname);
 	if(password != "")
 		setPassword((const char *)password);
 	if(port)

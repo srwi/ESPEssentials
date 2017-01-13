@@ -13,6 +13,7 @@ class WebServerClass : public ESP8266WebServer
 		WebServerClass(int port);
 		void init();
 		bool handleFileRead(String path);
+		bool isBusy();
 
 	private:
 		File fsUploadFile;
@@ -21,6 +22,7 @@ class WebServerClass : public ESP8266WebServer
 		THandlerFunction _handle_file_list;
 		THandlerFunction _handle_file_upload;
 		THandlerFunction _handle_wifi_credentials;
+		bool webserverBusy = false;
 
 		String formatBytes(size_t bytes);
 		String getContentType(String filename);

@@ -62,6 +62,11 @@ void WebServerClass::init()
 	begin();
 }
 
+bool WebServerClass::isBusy()
+{
+	return webserverBusy;
+}
+
 String WebServerClass::formatBytes(size_t bytes)
 {
 	if (bytes < 1024)
@@ -115,6 +120,7 @@ bool WebServerClass::handleFileRead(String path)
 {
 	Serial.println("[Storage] File read: " + path);
 	
+	webserverBusy = true;
 	if(path.endsWith("/")) path += "index.htm";
 	String contentType = getContentType(path);
 	String pathWithGz = path + ".gz";
@@ -128,9 +134,11 @@ bool WebServerClass::handleFileRead(String path)
 		size_t sent = streamFile(file, contentType);
 		file.close();
 
+		webserverBusy = false;
 		return true;
 	}
 
+	webserverBusy = false;
 	return false;
 }
 

@@ -16,9 +16,9 @@ bool WifiClass::connect(String ssid, String passphrase)
 	Serial.printf("[Wifi] Connecting to \"%s\"...", ssid.c_str());
 
 	// Don't remember future credentials
-	persistent(false);
+	//persistent(false);
 
-	mode(WIFI_STA);
+	//mode(WIFI_STA);
 
 	for(uint16_t i = 0; i < WIFI_CONNECT_MAX_ATTEMPTS; i++)
 	{
