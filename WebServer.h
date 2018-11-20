@@ -21,7 +21,6 @@ class WebServerClass : public ESP8266WebServer
 		THandlerFunction _handle_file_delete;
 		THandlerFunction _handle_file_list;
 		THandlerFunction _handle_file_upload;
-		THandlerFunction _handle_wifi_credentials;
 		bool webserverBusy = false;
 
 		String formatBytes(size_t bytes);
@@ -30,7 +29,6 @@ class WebServerClass : public ESP8266WebServer
 		void handleFileDelete();
 		void handleFileCreate();
 		void handleFileList();
-		void handleWifiCredentials();
 };
 
 extern WebServerClass WebServer;

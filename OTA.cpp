@@ -1,13 +1,7 @@
 #include "OTA.h"
 
-void OTAClass::init(char *hostname, char *password, uint16_t port)
+void OTAClass::init(char const *hostname, char *password, uint16_t port)
 {
-	if(!Wifi.isConnected() || Wifi.isAP())
-	{
-		Serial.println("[OTA] No wifi connection to router. OTA will not be available!");
-		return;
-	}
-
 	if(hostname != "")
 		setHostname(hostname);
 	if(password != "")

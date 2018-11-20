@@ -6,7 +6,6 @@ WebServerClass::WebServerClass(int port = 80) : ESP8266WebServer(port)
 	_handle_file_delete = [&]() { handleFileDelete(); };
 	_handle_file_list = [&]() { handleFileList(); };
 	_handle_file_upload = [&]() { handleFileUpload(); };
-	_handle_wifi_credentials = [&]() { handleWifiCredentials(); };
 }
 
 void WebServerClass::init()
@@ -22,7 +21,7 @@ void WebServerClass::init()
 		if(!handleFileRead("/edit.htm"))
 		{
 			String content	=	"<form method='post' enctype='multipart/form-data'>";
-			content			+=		"<label>Upload a file to SPIFFS:";
+			content			+=		"<label>Upload a file (e.g. <i>edit.htm.gz</i>) to SPIFFS:";
 			content			+=			"<input name='datei' type='file'>";
 			content			+=		"</label>";
 			content			+=		"<button>Upload!</button>";
@@ -34,21 +33,6 @@ void WebServerClass::init()
 	on("/edit", HTTP_DELETE, _handle_file_delete);
 	on("/edit", HTTP_POST, [&](){ send(200, "text/plain", ""); }, _handle_file_upload);
 	on("/list", HTTP_GET, _handle_file_list);
-	if(Wifi.isAP())
-	{
-		Serial.println("[WebServer] Sendung credential input form.");
-		on("/", [&]()
-		{
-			String content	=	"<form action='/wifi_credentials' method='POST'>";
-			content			+=		"Please enter new wifi credentials:<br>";
-			content			+=		"<input type='text' name='SSID' placeholder='Network Name'><br>";
-			content			+=		"<input type='password' name='PASSPHRASE' placeholder='Password'><br>";
-			content			+=		"<input type='submit' name='SUBMIT' value='Save and connect!'>";
-			content			+=	"</form>";
-			send(200, "text/html", content);
-		});
-		on("/wifi_credentials", _handle_wifi_credentials);
-	}
 	// This is actually used to retrieve all other websites from SPIFFS (or sending error 404 if they don't exist)
 	onNotFound([&]()
 	{
@@ -95,25 +79,6 @@ String WebServerClass::getContentType(String filename)
 	else if(filename.endsWith(".zip")) return "application/x-zip";
 	else if(filename.endsWith(".gz")) return "application/x-gzip";
 	return "text/plain";
-}
-
-void WebServerClass::handleWifiCredentials()
-{
-	// TODO: Implement open wifi networks
-	if (hasArg("SSID")/* && hasArg("PASSPHRASE")*/)
-	{
-		send(404, "text/plain", "The device will now restart...");
-		Wifi.saveCredentials(String(arg("SSID")), String(arg("PASSPHRASE")));
-		Serial.println("[Wifi] Got new credentials through AP:");
-		Serial.println("\tSSID: " + arg("SSID"));
-		Serial.println("\tPassphrase: " + arg("PASSPHRASE"));
-		delay(30);
-		ESP.restart();
-	}
-	else
-	{
-		send(404, "text/plain", "Oops, you forgot something!");
-	}
 }
 
 bool WebServerClass::handleFileRead(String path)
