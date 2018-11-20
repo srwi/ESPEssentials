@@ -7,7 +7,7 @@
 class OTAClass : public ArduinoOTAClass
 {
 	public:
-		void init(char const *hostname = "", char *password = "", uint16_t port = 0);
+		void init(char const *hostname = "", char const *password = "", uint16_t port = 0);
 };
 
 extern OTAClass OTA;

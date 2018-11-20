@@ -1,10 +1,10 @@
 #include "OTA.h"
 
-void OTAClass::init(char const *hostname, char *password, uint16_t port)
+void OTAClass::init(char const *hostname, char const *password, uint16_t port)
 {
-	if(hostname != "")
+	if(strcmp(hostname, "") == 0)
 		setHostname(hostname);
-	if(password != "")
+	if(strcmp(password, "") == 0)
 		setPassword((const char *)password);
 	if(port)
 		setPort(port);

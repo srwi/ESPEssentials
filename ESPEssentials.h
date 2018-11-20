@@ -19,7 +19,7 @@ void initESPEssentials(String projectName)
 
 	Wifi.autoConnect((projectName + " Setup").c_str());
 	WebServer.init();
-	OTA.init((projectName + " (PW: yes)").c_str(), "yes");
+	OTA.init((projectName + " (PW: okay)").c_str(), "okay");
 }
 
 #endif

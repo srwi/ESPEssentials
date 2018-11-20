@@ -6,6 +6,7 @@ WebServerClass::WebServerClass(int port = 80) : ESP8266WebServer(port)
 	_handle_file_delete = [&]() { handleFileDelete(); };
 	_handle_file_list = [&]() { handleFileList(); };
 	_handle_file_upload = [&]() { handleFileUpload(); };
+	_handle_update = [&]() { handleUpdate(); };
 }
 
 void WebServerClass::init()
@@ -33,6 +34,23 @@ void WebServerClass::init()
 	on("/edit", HTTP_DELETE, _handle_file_delete);
 	on("/edit", HTTP_POST, [&](){ send(200, "text/plain", ""); }, _handle_file_upload);
 	on("/list", HTTP_GET, _handle_file_list);
+	on("/update", HTTP_GET, [&]() {
+		sendHeader("Connection", "close");
+		sendHeader("Access-Control-Allow-Origin", "*");
+		String content = "<form method='POST' action='/handle_update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
+		send(200, "text/html", content);
+	});
+	on("/handle_update", HTTP_POST, [&]() {
+		sendHeader("Connection", "close");
+		sendHeader("Access-Control-Allow-Origin", "*");
+		send(200, "text/plain", (Update.hasError())?"FAIL":"OK");
+		ESP.restart();
+	}, _handle_update);
+	WebServer.on("reboot", HTTP_GET, [&]()
+	{
+		ESP.restart();
+		send(200, "text/plain", "Rebooting...");
+	});
 	// This is actually used to retrieve all other websites from SPIFFS (or sending error 404 if they don't exist)
 	onNotFound([&]()
 	{
@@ -96,7 +114,7 @@ bool WebServerClass::handleFileRead(String path)
 			path += ".gz";
 
 		File file = SPIFFS.open(path, "r");
-		size_t sent = streamFile(file, contentType);
+		streamFile(file, contentType);
 		file.close();
 
 		webserverBusy = false;
@@ -209,6 +227,42 @@ void WebServerClass::handleFileList()
 	output += "]";
 
 	send(200, "text/json", output);
+}
+
+void WebServerClass::handleUpdate()
+{
+	HTTPUpload& _upload = upload();
+
+	if(_upload.status == UPLOAD_FILE_START)
+	{
+		Serial.setDebugOutput(true);
+		WiFiUDP::stopAll();
+		Serial.printf("Update: %s\n", _upload.filename.c_str());
+		uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
+		if(!Update.begin(maxSketchSpace))
+		{
+			Update.printError(Serial);
+		}
+	}
+	else if(_upload.status == UPLOAD_FILE_WRITE)
+	{
+		if(Update.write(_upload.buf, _upload.currentSize) != _upload.currentSize){
+			Update.printError(Serial);
+		}
+	}
+	else if(_upload.status == UPLOAD_FILE_END)
+	{
+		if(Update.end(true))
+		{
+			Serial.printf("Update Success: %u\nRebooting...\n", _upload.totalSize);
+		}
+		else
+		{
+			Update.printError(Serial);
+		}
+		Serial.setDebugOutput(false);
+	}
+	yield();
 }
 
 WebServerClass WebServer(80);
