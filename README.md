@@ -21,3 +21,6 @@ void loop()
 	handleESPEssentials();
 }
 ```
+
+## Notes
+- To edit files inside your browser upload the [_edit.htm.gz_](https://github.com/stnkl/ESPEssentials/blob/master/data/edit.htm.gz) to the root directory.
