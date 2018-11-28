@@ -1,8 +1,13 @@
 {
   "name": "ESPEssentials",
   "description": "Essentials for the ESP8266",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/stnkl/ESPEssentials.git"
+  },
   "frameworks": "arduino",
-  "platforms": "*",
+  "platforms": "espressif8266",
   "authors":
   {
     "name": "stnkl",
