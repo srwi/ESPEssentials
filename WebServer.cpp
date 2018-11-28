@@ -13,7 +13,7 @@ void WebServerClass::init()
 {
 	if (!SPIFFS.begin())
 	{
-		Serial.println("[Wifi] Couldn't mount file system.");
+		Serial.println("[Storage] Couldn't mount file system.");
 		return;
 	}
 	
@@ -34,22 +34,26 @@ void WebServerClass::init()
 	on("/edit", HTTP_DELETE, _handle_file_delete);
 	on("/edit", HTTP_POST, [&](){ send(200, "text/plain", ""); }, _handle_file_upload);
 	on("/list", HTTP_GET, _handle_file_list);
-	on("/update", HTTP_GET, [&]() {
+	on("/update", HTTP_GET, [&]()
+	{
 		sendHeader("Connection", "close");
 		sendHeader("Access-Control-Allow-Origin", "*");
 		String content = "<form method='POST' action='/handle_update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 		send(200, "text/html", content);
 	});
-	on("/handle_update", HTTP_POST, [&]() {
+	on("/handle_update", HTTP_POST, [&]()
+	{
 		sendHeader("Connection", "close");
 		sendHeader("Access-Control-Allow-Origin", "*");
 		send(200, "text/plain", (Update.hasError())?"FAIL":"OK");
+		delay(200);
 		ESP.restart();
 	}, _handle_update);
 	WebServer.on("reboot", HTTP_GET, [&]()
 	{
-		ESP.restart();
 		send(200, "text/plain", "Rebooting...");
+		delay(200);
+		ESP.restart();
 	});
 	// This is actually used to retrieve all other websites from SPIFFS (or sending error 404 if they don't exist)
 	onNotFound([&]()
