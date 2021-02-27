@@ -57,8 +57,8 @@ HTTP requests can be initialized within `setup()`. For example to reset wifi set
 
 ```cpp
 WebServer.on("/reset_wifi", HTTP_GET, [&]() {
-    Wifi.resetSettings();
     WebServer.send(200, "text/plain", "Wifi settings reset.");
+    Wifi.resetSettings();
 });
 ```
 
