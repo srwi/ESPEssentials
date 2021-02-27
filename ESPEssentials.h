@@ -5,7 +5,10 @@
 #include "WebServer.h"
 #include "OTA.h"
 
+#define ESSENTIALS_BAUD 115200
+
 void handleESPEssentials();
-void initESPEssentials(String projectName);
+void initESPEssentials(String projectName, int baudRate = ESSENTIALS_BAUD, String otaPassword = "");
+void initESPEssentials(String projectName, String otaPassword);
 
 #endif

@@ -7,14 +7,19 @@ void handleESPEssentials()
 	OTA.handle();
 }
 
-void initESPEssentials(String projectName)
+void initESPEssentials(String projectName, int baudRate, String otaPassword)
 {
-	Serial.begin(115200);
+	Serial.begin(baudRate);
 	Serial.println("");
 
 	if(Wifi.autoConnect((projectName + " Setup").c_str()))
 	{
 		WebServer.init();
-		OTA.init((projectName + " (PW: okay)").c_str(), "okay");
+		OTA.init(projectName.c_str(), otaPassword.c_str());
 	}
+}
+
+void initESPEssentials(String projectName, String otaPassword)
+{
+	initESPEssentials(projectName, ESSENTIALS_BAUD, otaPassword);
 }
