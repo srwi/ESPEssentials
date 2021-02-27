@@ -16,7 +16,7 @@ void WebServerClass::init()
 		Serial.println("[Storage] Couldn't mount file system.");
 		return;
 	}
-	
+
 	on("/edit", HTTP_GET, [&]()
 	{
 		if(!handleFileRead("/edit.htm"))
@@ -32,7 +32,7 @@ void WebServerClass::init()
 	});
 	on("/edit", HTTP_PUT, _handle_file_create);
 	on("/edit", HTTP_DELETE, _handle_file_delete);
-	on("/edit", HTTP_POST, [&](){ send(200, "text/plain", ""); }, _handle_file_upload);
+	on("/edit", HTTP_POST, [&]() { send(200, "text/plain", ""); }, _handle_file_upload);
 	on("/list", HTTP_GET, _handle_file_list);
 	on("/update", HTTP_GET, [&]()
 	{
@@ -64,7 +64,7 @@ void WebServerClass::init()
 			send(404, "text/plain", "Oops, file not found!");
 		}
 	});
-	
+
 	begin();
 }
 
@@ -106,7 +106,7 @@ String WebServerClass::getContentType(String filename)
 bool WebServerClass::handleFileRead(String path)
 {
 	Serial.println("[Storage] File read: " + path);
-	
+
 	webserverBusy = true;
 	if(path.endsWith("/")) path += "index.htm";
 	String contentType = getContentType(path);
@@ -135,7 +135,7 @@ void WebServerClass::handleFileUpload()
 		return;
 
 	HTTPUpload& _upload = upload();
-	
+
 	if(_upload.status == UPLOAD_FILE_START)
 	{
 		String filename = _upload.filename;
@@ -148,7 +148,6 @@ void WebServerClass::handleFileUpload()
 	}
 	else if(_upload.status == UPLOAD_FILE_WRITE)
 	{
-		//Serial.print("[Storage] Receiving..." + _upload.currentSize);
 		if(fsUploadFile)
 			fsUploadFile.write(_upload.buf, _upload.currentSize);
 	}
@@ -164,17 +163,17 @@ void WebServerClass::handleFileDelete()
 {
 	if(args() == 0)
 		return send(500, "text/plain", "BAD ARGS");
-	
+
 	String path = arg(0);
 	Serial.println("[Storage] Deleting file: " + path);
-	
+
 	if(path == "/")
 		return send(500, "text/plain", "BAD PATH");
 	if(!SPIFFS.exists(path))
 		return send(404, "text/plain", "Oops, file not found (3)!");
-	
+
 	SPIFFS.remove(path);
-	
+
 	send(200, "text/plain", "");
 	path = String();
 }
@@ -183,22 +182,22 @@ void WebServerClass::handleFileCreate()
 {
 	if(args() == 0)
 		return send(500, "text/plain", "BAD ARGS");
-	
+
 	String path = arg(0);
 	Serial.println("[Storage] Creating file: " + path);
-	
+
 	if(path == "/")
 		return send(500, "text/plain", "BAD PATH");
 	if(SPIFFS.exists(path))
 		return send(500, "text/plain", "File already exists!");
-	
+
 	File file = SPIFFS.open(path, "w");
-	
+
 	if(file)
 		file.close();
 	else
 		return send(500, "text/plain", "Oops, creating file failed!");
-	
+
 	send(200, "text/plain", "");
 	path = String();
 }
@@ -210,7 +209,7 @@ void WebServerClass::handleFileList()
 		send(500, "text/plain", "BAD ARGS");
 		return;
 	}
-	
+
 	String path = arg("dir");
 	Dir dir = SPIFFS.openDir(path);
 	path = String();

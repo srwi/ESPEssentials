@@ -1,8 +1,9 @@
-#ifndef _OTA_H_714124218
-#define _OTA_H_714124218
+#ifndef ESPESSENTIALS_OTA_H
+#define ESPESSENTIALS_OTA_H
+
+#include "Wifi.h"
 
 #include <ArduinoOTA.h>
-#include "Wifi.h"
 
 class OTAClass : public ArduinoOTAClass
 {

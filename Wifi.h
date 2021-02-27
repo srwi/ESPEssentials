@@ -1,5 +1,5 @@
-#ifndef _WIFI_H_471412218
-#define _WIFI_H_471412218
+#ifndef ESPESSENTIALS_WIFI_H
+#define ESPESSENTIALS_WIFI_H
 
 #include <WiFiManager.h>
 
