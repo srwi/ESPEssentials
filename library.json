@@ -1,6 +1,6 @@
 {
   "name": "ESPEssentials",
-  "description": "Essentials for the ESP8266",
+  "description": "Essentials to get you started with your ESP8266 project",
   "repository":
   {
     "type": "git",
@@ -10,7 +10,9 @@
   "platforms": "espressif8266",
   "authors":
   {
-    "name": "stnkl",
-    "maintainer": true
-  }
+    "name": "Stephan Rumswinkel",
+    "maintainer": true,
+    "url": "https://github.com/stnkl"
+  },
+  "version": "1.0"
 }
