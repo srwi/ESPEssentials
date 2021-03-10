@@ -8,7 +8,7 @@ Essentials for the ESP8266 to get you started with your Arduino project without 
 ## Features
 - Serial output
 - Wifi connection management using [WiFiManager](https://github.com/tzapu/WiFiManager)
-- Webserver including file upload and editing
+- Webserver including file upload and editing via browser
 - OTA firmware update
 - Web firmware update
 
@@ -65,7 +65,9 @@ WebServer.on("/reset_wifi", HTTP_GET, [&]() {
 
 *Note:* The routes `/edit`, `/handle_update`, `/list`, `/reboot` and `/update` are already used by ESPEssentials and can not be used.
 
-To edit files inside your browser upload the [_edit.htm.gz_](https://github.com/stnkl/ESPEssentials/blob/master/data/edit.htm.gz) to the root directory. The easiest way to do this is by accessing `http://<device-ip>/edit` and uploading it from there.
+To edit files inside your browser upload [`/data/edit.htm.gz`](https://github.com/stnkl/ESPEssentials/blob/master/data/edit.htm.gz) to the root directory. The easiest way to do this is by accessing `http://<device-ip>/edit` and uploading it from there. Afterwards you can access the file editor via the same URL to edit files directly on the ESP8266.
+
+Each file created/uploaded that way can be accessed via the corresponding URL (e.g. `http://<device-ip>/myPage` to access `/myPage.htm`).
 
 ### OTA firmware update
 
