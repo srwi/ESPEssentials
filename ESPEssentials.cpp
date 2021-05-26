@@ -1,5 +1,10 @@
 #include "ESPEssentials.h"
 
+#include "Wifi.h"
+#include "OTA.h"
+#include "SerialOut.h"
+#include "WebServer.h"
+
 void handleESPEssentials()
 {
 	Wifi.process();
@@ -10,7 +15,7 @@ void handleESPEssentials()
 void initESPEssentials(String projectName, int baudRate, String otaPassword)
 {
 	Serial.begin(baudRate);
-	Serial.println("");
+	PRINTLN("");
 
 	if(Wifi.autoConnect((projectName + " Setup").c_str()))
 	{

@@ -1,9 +1,11 @@
 #ifndef ESPESSENTIALS_H
 #define ESPESSENTIALS_H
 
-#include "Wifi.h"
 #include "OTA.h"
 #include "WebServer.h"
+#include "Wifi.h"
+
+#include <Arduino.h>
 
 #define ESSENTIALS_BAUD 115200
 

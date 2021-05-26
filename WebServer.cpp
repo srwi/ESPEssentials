@@ -1,4 +1,9 @@
 #include "WebServer.h"
+#include "SerialOut.h"
+
+#include <ESP8266WiFi.h>
+#include <FS.h>
+#include <WiFiUdp.h>
 
 WebServerClass::WebServerClass(int port = 80) : ESP8266WebServer(port)
 {
@@ -13,7 +18,7 @@ void WebServerClass::init()
 {
 	if (!SPIFFS.begin())
 	{
-		Serial.println("[Storage] Couldn't mount file system.");
+		PRINTLN("[Storage] Couldn't mount file system.");
 		return;
 	}
 
@@ -60,7 +65,7 @@ void WebServerClass::init()
 	{
 		if(!handleFileRead(uri()))
 		{
-			Serial.println("[Storage] Couldn't find file at \'" + uri() + "\'" + ".");
+			PRINTLN("[Storage] Couldn't find file at \'" + uri() + "\'" + ".");
 			send(404, "text/plain", "Oops, file not found!");
 		}
 	});
@@ -105,7 +110,7 @@ String WebServerClass::getContentType(String filename)
 
 bool WebServerClass::handleFileRead(String path)
 {
-	Serial.println("[Storage] File read: " + path);
+	PRINTLN_VERBOSE("[Storage] File read: " + path);
 
 	webserverBusy = true;
 	if(path.endsWith("/")) path += "index.htm";
@@ -141,7 +146,7 @@ void WebServerClass::handleFileUpload()
 		String filename = _upload.filename;
 		if(!filename.startsWith("/"))
 			filename = "/" + filename;
-		Serial.println("[Storage] Uploading file: " + filename);
+		PRINTLN("[Storage] Uploading file: " + filename);
 
 		fsUploadFile = SPIFFS.open(filename, "w");
 		filename = String();
@@ -155,7 +160,7 @@ void WebServerClass::handleFileUpload()
 	{
 		if(fsUploadFile)
 			fsUploadFile.close();
-		Serial.println("[Storage] Received total: " + formatBytes(_upload.totalSize));
+		PRINTLN("[Storage] Received total: " + formatBytes(_upload.totalSize));
 	}
 }
 
@@ -165,7 +170,7 @@ void WebServerClass::handleFileDelete()
 		return send(500, "text/plain", "BAD ARGS");
 
 	String path = arg(0);
-	Serial.println("[Storage] Deleting file: " + path);
+	PRINTLN("[Storage] Deleting file: " + path);
 
 	if(path == "/")
 		return send(500, "text/plain", "BAD PATH");
@@ -184,7 +189,7 @@ void WebServerClass::handleFileCreate()
 		return send(500, "text/plain", "BAD ARGS");
 
 	String path = arg(0);
-	Serial.println("[Storage] Creating file: " + path);
+	PRINTLN("[Storage] Creating file: " + path);
 
 	if(path == "/")
 		return send(500, "text/plain", "BAD PATH");
@@ -240,7 +245,7 @@ void WebServerClass::handleUpdate()
 	{
 		Serial.setDebugOutput(true);
 		WiFiUDP::stopAll();
-		Serial.printf("Update: %s\n", _upload.filename.c_str());
+		PRINTF("Update: %s\n", _upload.filename.c_str());
 		uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
 		if(!Update.begin(maxSketchSpace))
 		{
@@ -257,7 +262,7 @@ void WebServerClass::handleUpdate()
 	{
 		if(Update.end(true))
 		{
-			Serial.printf("Update Success: %u\nRebooting...\n", _upload.totalSize);
+			PRINTF("Update Success: %u\nRebooting...\n", _upload.totalSize);
 		}
 		else
 		{

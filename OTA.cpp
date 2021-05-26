@@ -1,4 +1,5 @@
 #include "OTA.h"
+#include "SerialOut.h"
 
 void OTAClass::init(char const *hostname, char const *password, uint16_t port)
 {
@@ -11,42 +12,42 @@ void OTAClass::init(char const *hostname, char const *password, uint16_t port)
 
 	onStart([]()
 	{
-		Serial.println("[OTA] Start");
+		PRINTLN("[OTA] Start");
 	});
 	onEnd([]()
 	{
-		Serial.println("\n[OTA] End");
+		PRINTLN("\n[OTA] End");
 	});
 	onProgress([](unsigned int progress, unsigned int total)
 	{
-		Serial.printf("[OTA] Progress: %u%%\r", (progress / (total / 100)));
+		PRINTF("[OTA] Progress: %u%%\r", (progress / (total / 100)));
 	});
 	onError([](ota_error_t error)
 	{
-		Serial.printf("[OTA] Error[%u]: ", error);
+		PRINTF("[OTA] Error[%u]: ", error);
 
 		switch(error)
 		{
 			case OTA_AUTH_ERROR:
-				Serial.println("Auth Failed");
+				PRINTLN("Auth Failed");
 				break;
 			case OTA_BEGIN_ERROR:
-				Serial.println("Begin Failed");
+				PRINTLN("Begin Failed");
 				break;
 			case OTA_CONNECT_ERROR:
-				Serial.println("Connect Failed");
+				PRINTLN("Connect Failed");
 				break;
 			case OTA_RECEIVE_ERROR:
-				Serial.println("Receive Failed");
+				PRINTLN("Receive Failed");
 				break;
 			case OTA_END_ERROR:
-				Serial.println("End Failed");
+				PRINTLN("End Failed");
 				break;
 		}
 	});
 
 	begin();
-	Serial.println("[OTA] OTA started");
+	PRINTLN("[OTA] OTA started");
 }
 
 OTAClass OTA;
