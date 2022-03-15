@@ -1,7 +1,7 @@
 # ESPEssentials
 
 [![arduino-library-badge](https://www.ardu-badge.com/badge/ESPEssentials.svg?)](https://www.ardu-badge.com/ESPEssentials)
-[![License: LGPL v2.1](https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![LGPL-2.1 license](https://img.shields.io/github/license/stnkl/ESPEssentials)](https://github.com/stnkl/ESPEssentials/blob/master/LICENSE)
 
 Essentials for the ESP8266 to get you started with your Arduino project without any of the annoying stuff.
 
