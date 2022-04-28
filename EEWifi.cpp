@@ -8,6 +8,6 @@ EEWifiClass::EEWifiClass()
 	setConfigPortalBlocking(false);
 }
 
-EEWifiClass EEWifi;
+EEWifiClass Wifi;
 
 } // namespace ESPEssentials

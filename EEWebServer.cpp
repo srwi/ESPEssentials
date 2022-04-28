@@ -13,6 +13,9 @@
 
 #include <WiFiUdp.h>
 
+namespace ESPEssentials
+{
+
 EEWebServerClass::EEWebServerClass(int port = 80)
 {
 	_handle_file_create = [&]() { handleFileCreate(); };
@@ -309,4 +312,6 @@ void EEWebServerClass::handleUpdate()
 	yield();
 }
 
-EEWebServerClass EEWebServer(80);
+EEWebServerClass WebServer(80);
+
+} // namespace ESPEssentials

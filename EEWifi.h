@@ -11,6 +11,6 @@ class EEWifiClass : public WiFiManager
 		EEWifiClass();
 };
 
-extern EEWifiClass EEWifi;
+extern EEWifiClass Wifi;
 
 } // namespace ESPEssentials

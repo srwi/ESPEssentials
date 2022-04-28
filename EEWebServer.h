@@ -13,6 +13,9 @@
 	typedef ESP8266WebServer EEBaseWebServerClass;
 #endif
 
+namespace ESPEssentials
+{
+
 class EEWebServerClass : public EEBaseWebServerClass
 {
 	public:
@@ -39,4 +42,6 @@ class EEWebServerClass : public EEBaseWebServerClass
 		void handleUpdate();
 };
 
-extern EEWebServerClass EEWebServer;
+extern EEWebServerClass WebServer;
+
+} // namespace ESPEssentials

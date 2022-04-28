@@ -2,10 +2,10 @@
 
 void setup()
 {
-    initESPEssentials("Project Name");
+    ESPEssentials::init("Project Name");
 }
 
 void loop()
 {
-    handleESPEssentials();
+    ESPEssentials::handle();
 }

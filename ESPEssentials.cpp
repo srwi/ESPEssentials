@@ -10,8 +10,8 @@ namespace ESPEssentials
 
 void handle()
 {
-	EEWifi.process();
-	EEWebServer.handleClient();
+	Wifi.process();
+	WebServer.handleClient();
 	OTA.handle();
 }
 
@@ -20,9 +20,9 @@ void init(String projectName, int baudRate, String otaPassword)
 	Serial.begin(baudRate);
 	PRINTLN("");
 
-	if(EEWifi.autoConnect((projectName + " Setup").c_str()))
+	if(Wifi.autoConnect((projectName + " Setup").c_str()))
 	{
-		EEWebServer.init();
+		WebServer.init();
 		OTA.init(projectName.c_str(), otaPassword.c_str());
 	}
 }
