@@ -1,6 +1,8 @@
 # ESPEssentials
 
-[![arduino-library-badge](https://www.ardu-badge.com/badge/ESPEssentials.svg?)](https://www.ardu-badge.com/ESPEssentials)
+![ESP8266](https://img.shields.io/badge/ESP-8266-000000.svg?colorB=blue)
+![ESP32](https://img.shields.io/badge/ESP-32-000000.svg?colorB=blue)
+[![arduino-library-badge](https://www.ardu-badge.com/badge/ESPEssentials.svg)](https://www.ardu-badge.com/ESPEssentials)
 [![LGPL-2.1 license](https://img.shields.io/github/license/stnkl/ESPEssentials)](https://github.com/stnkl/ESPEssentials/blob/master/LICENSE)
 
 Essentials for the ESP8266 and ESP32 to get you started with your Arduino project without any of the annoying stuff.
