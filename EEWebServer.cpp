@@ -1,11 +1,22 @@
-#include "WebServer.h"
-#include "SerialOut.h"
+#include "EEWebServer.h"
 
-#include <ESP8266WiFi.h>
-#include <FS.h>
+#include "EESerialOut.h"
+
+#if defined(ESP32)
+	#include <SPIFFS.h>
+	#include <Update.h>
+	#include <WiFi.h>
+#elif defined(ESP8266)
+	#include <ESP8266WiFi.h>
+	#include <FS.h>
+#endif
+
 #include <WiFiUdp.h>
 
-WebServerClass::WebServerClass(int port = 80) : ESP8266WebServer(port)
+namespace ESPEssentials
+{
+
+EEWebServerClass::EEWebServerClass(int port = 80)
 {
 	_handle_file_create = [&]() { handleFileCreate(); };
 	_handle_file_delete = [&]() { handleFileDelete(); };
@@ -14,7 +25,7 @@ WebServerClass::WebServerClass(int port = 80) : ESP8266WebServer(port)
 	_handle_update = [&]() { handleUpdate(); };
 }
 
-void WebServerClass::init()
+void EEWebServerClass::init()
 {
 	if (!SPIFFS.begin())
 	{
@@ -54,13 +65,12 @@ void WebServerClass::init()
 		delay(200);
 		ESP.restart();
 	}, _handle_update);
-	WebServer.on("reboot", HTTP_GET, [&]()
+	on("reboot", HTTP_GET, [&]()
 	{
 		send(200, "text/plain", "Rebooting...");
 		delay(200);
 		ESP.restart();
 	});
-	// This is actually used to retrieve all other websites from SPIFFS (or sending error 404 if they don't exist)
 	onNotFound([&]()
 	{
 		if(!handleFileRead(uri()))
@@ -73,12 +83,12 @@ void WebServerClass::init()
 	begin();
 }
 
-bool WebServerClass::isBusy()
+bool EEWebServerClass::isBusy()
 {
 	return webserverBusy;
 }
 
-String WebServerClass::formatBytes(size_t bytes)
+String EEWebServerClass::formatBytes(size_t bytes)
 {
 	if (bytes < 1024)
 		return String(bytes) + "B";
@@ -90,7 +100,7 @@ String WebServerClass::formatBytes(size_t bytes)
 		return String(bytes / 1024.0 / 1024.0 / 1024.0) + "GB";
 }
 
-String WebServerClass::getContentType(String filename)
+String EEWebServerClass::getContentType(String filename)
 {
 	if(hasArg("download")) return "application/octet-stream";
 	else if(filename.endsWith(".htm")) return "text/html";
@@ -108,7 +118,7 @@ String WebServerClass::getContentType(String filename)
 	return "text/plain";
 }
 
-bool WebServerClass::handleFileRead(String path)
+bool EEWebServerClass::handleFileRead(String path)
 {
 	PRINTLN_VERBOSE("[Storage] File read: " + path);
 
@@ -134,7 +144,7 @@ bool WebServerClass::handleFileRead(String path)
 	return false;
 }
 
-void WebServerClass::handleFileUpload()
+void EEWebServerClass::handleFileUpload()
 {
 	if(uri() != "/edit")
 		return;
@@ -164,7 +174,7 @@ void WebServerClass::handleFileUpload()
 	}
 }
 
-void WebServerClass::handleFileDelete()
+void EEWebServerClass::handleFileDelete()
 {
 	if(args() == 0)
 		return send(500, "text/plain", "BAD ARGS");
@@ -183,7 +193,7 @@ void WebServerClass::handleFileDelete()
 	path = String();
 }
 
-void WebServerClass::handleFileCreate()
+void EEWebServerClass::handleFileCreate()
 {
 	if(args() == 0)
 		return send(500, "text/plain", "BAD ARGS");
@@ -207,7 +217,7 @@ void WebServerClass::handleFileCreate()
 	path = String();
 }
 
-void WebServerClass::handleFileList()
+void EEWebServerClass::handleFileList()
 {
 	if(!hasArg("dir"))
 	{
@@ -215,6 +225,29 @@ void WebServerClass::handleFileList()
 		return;
 	}
 
+#if defined(ESP32)
+	String path = arg("dir");
+	File dir = SPIFFS.open(path);
+	path = String();
+
+	String output = "[";
+	if (dir.isDirectory())
+	{
+		File file = dir.openNextFile();
+		while(file)
+		{
+			if (output != "[") output += ',';
+			bool isDir = false;
+			output += "{\"type\":\"";
+			output += (isDir)?"dir":"file";
+			output += "\",\"name\":\"";
+			output += String(file.path()).substring(1);
+			output += "\"}";
+			file = dir.openNextFile();
+		}
+	}
+	output += "]";
+#elif defined(ESP8266)
 	String path = arg("dir");
 	Dir dir = SPIFFS.openDir(path);
 	path = String();
@@ -233,20 +266,25 @@ void WebServerClass::handleFileList()
 		entry.close();
 	}
 	output += "]";
+#endif
 
 	send(200, "text/json", output);
 }
 
-void WebServerClass::handleUpdate()
+void EEWebServerClass::handleUpdate()
 {
 	HTTPUpload& _upload = upload();
 
 	if(_upload.status == UPLOAD_FILE_START)
 	{
 		Serial.setDebugOutput(true);
-		WiFiUDP::stopAll();
 		PRINTF("Update: %s\n", _upload.filename.c_str());
+#if defined(ESP32)
+		uint32_t maxSketchSpace = UPDATE_SIZE_UNKNOWN;
+#elif defined(ESP8266)
+		WiFiUDP::stopAll();
 		uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
+#endif
 		if(!Update.begin(maxSketchSpace))
 		{
 			Update.printError(Serial);
@@ -254,7 +292,8 @@ void WebServerClass::handleUpdate()
 	}
 	else if(_upload.status == UPLOAD_FILE_WRITE)
 	{
-		if(Update.write(_upload.buf, _upload.currentSize) != _upload.currentSize){
+		if(Update.write(_upload.buf, _upload.currentSize) != _upload.currentSize)
+		{
 			Update.printError(Serial);
 		}
 	}
@@ -262,7 +301,7 @@ void WebServerClass::handleUpdate()
 	{
 		if(Update.end(true))
 		{
-			PRINTF("Update Success: %u\nRebooting...\n", _upload.totalSize);
+			PRINTF("Update success: %u\nRebooting...\n", _upload.totalSize);
 		}
 		else
 		{
@@ -273,4 +312,6 @@ void WebServerClass::handleUpdate()
 	yield();
 }
 
-WebServerClass WebServer(80);
+EEWebServerClass WebServer(80);
+
+} // namespace ESPEssentials

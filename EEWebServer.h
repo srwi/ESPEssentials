@@ -1,13 +1,25 @@
-#ifndef ESPESSENTIALS_WEBSERVER_H
-#define ESPESSENTIALS_WEBSERVER_H
+#pragma once
 
 #include <Arduino.h>
-#include <ESP8266WebServer.h>
 
-class WebServerClass : public ESP8266WebServer
+#if defined(ESP32)
+	#include <WebServer.h>
+	#include <FS.h>
+
+	typedef WebServer EEBaseWebServerClass;
+#elif defined(ESP8266)
+	#include <ESP8266WebServer.h>
+
+	typedef ESP8266WebServer EEBaseWebServerClass;
+#endif
+
+namespace ESPEssentials
+{
+
+class EEWebServerClass : public EEBaseWebServerClass
 {
 	public:
-		WebServerClass(int port);
+		EEWebServerClass(int port);
 		void init();
 		bool handleFileRead(String path);
 		bool isBusy();
@@ -30,6 +42,6 @@ class WebServerClass : public ESP8266WebServer
 		void handleUpdate();
 };
 
-extern WebServerClass WebServer;
+extern EEWebServerClass WebServer;
 
-#endif
+} // namespace ESPEssentials

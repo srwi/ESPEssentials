@@ -1,9 +1,11 @@
 # ESPEssentials
 
-[![arduino-library-badge](https://www.ardu-badge.com/badge/ESPEssentials.svg?)](https://www.ardu-badge.com/ESPEssentials)
+![ESP8266](https://img.shields.io/badge/ESP-8266-000000.svg?colorB=blue)
+![ESP32](https://img.shields.io/badge/ESP-32-000000.svg?colorB=blue)
+[![arduino-library-badge](https://www.ardu-badge.com/badge/ESPEssentials.svg)](https://www.ardu-badge.com/ESPEssentials)
 [![LGPL-2.1 license](https://img.shields.io/github/license/stnkl/ESPEssentials)](https://github.com/stnkl/ESPEssentials/blob/master/LICENSE)
 
-Essentials for the ESP8266 to get you started with your Arduino project without any of the annoying stuff.
+Essentials for the ESP8266 and ESP32 to get you started with your Arduino project without any of the annoying stuff.
 
 ## Features
 - Serial output
@@ -24,12 +26,12 @@ ESPEssentials only needs three lines of additional code:
 
 void setup()
 {
-    initESPEssentials("Project Name");
+    ESPEssentials::init("Project Name");
 }
 
 void loop()
 {
-    handleESPEssentials();
+    ESPEssentials::handle();
 }
 ```
 
@@ -39,7 +41,7 @@ void loop()
 
 By default the baud rate will be 115200. You can specify it with
 ```cpp
-initESPEssentials("Project Name", 9600);
+ESPEssentials::init("Project Name", 9600);
 ```
 
 ### WiFiManager
@@ -47,7 +49,7 @@ initESPEssentials("Project Name", 9600);
 All WiFiManager methods can be accessed through the `Wifi` instance. For example to reset wifi settings:
 
 ```cpp
-Wifi.resetSettings();
+ESPEssentials::Wifi.resetSettings();
 ```
 
 More information can be found [here](https://github.com/tzapu/WiFiManager).
@@ -57,15 +59,15 @@ More information can be found [here](https://github.com/tzapu/WiFiManager).
 HTTP requests can be initialized within `setup()`. For example to reset wifi settings by accessing `http://<device-ip>/reset_wifi`:
 
 ```cpp
-WebServer.on("/reset_wifi", HTTP_GET, [&]() {
-    WebServer.send(200, "text/plain", "Wifi settings reset.");
-    Wifi.resetSettings();
+ESPEssentials::WebServer.on("/reset_wifi", HTTP_GET, [&]() {
+    ESPEssentials::WebServer.send(200, "text/plain", "Wifi settings reset.");
+    ESPEssentials::Wifi.resetSettings();
 });
 ```
 
 *Note:* The routes `/edit`, `/handle_update`, `/list`, `/reboot` and `/update` are already used by ESPEssentials and can not be used.
 
-To edit files inside your browser upload [`/data/edit.htm.gz`](https://github.com/stnkl/ESPEssentials/blob/master/data/edit.htm.gz) to the root directory. The easiest way to do this is by accessing `http://<device-ip>/edit` and uploading it from there. Afterwards you can access the file editor via the same URL to edit files directly on the ESP8266.
+To edit files inside your browser upload [`/data/edit.htm.gz`](https://github.com/stnkl/ESPEssentials/blob/master/data/edit.htm.gz) to the root directory. The easiest way to do this is by accessing `http://<device-ip>/edit` and uploading it from there. Afterwards you can access the file editor via the same URL to edit files directly on the device.
 
 Each file created/uploaded that way can be accessed via the corresponding URL (e.g. `http://<device-ip>/myPage` to access `/myPage.htm`).
 
@@ -74,9 +76,9 @@ Each file created/uploaded that way can be accessed via the corresponding URL (e
 An OTA password can be set up with
 
 ```cpp
-initESPEssentials("Project Name", "hunter2");
+ESPEssentials::init("Project Name", "hunter2");
 ```
 
 ### Web firmware update
 
-Open `http://<device-ip>/update` and select a `.bin` file to upload a new firmware to the ESP8266 from within the web browser.
+Open `http://<device-ip>/update` and select a `.bin` file to upload a new firmware to the ESP8266/ESP32 from within the web browser.
