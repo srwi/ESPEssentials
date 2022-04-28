@@ -1,9 +1,9 @@
-#ifndef ESPESSENTIALS_OTA_H
-#define ESPESSENTIALS_OTA_H
-
-#include "Wifi.h"
+#pragma once
 
 #include <ArduinoOTA.h>
+
+namespace ESPEssentials
+{
 
 class OTAClass : public ArduinoOTAClass
 {
@@ -13,4 +13,4 @@ class OTAClass : public ArduinoOTAClass
 
 extern OTAClass OTA;
 
-#endif
+} // namespace ESPEssentials

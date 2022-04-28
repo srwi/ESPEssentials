@@ -1,5 +1,8 @@
-#include "OTA.h"
-#include "SerialOut.h"
+#include "EEOTA.h"
+#include "EESerialOut.h"
+
+namespace ESPEssentials
+{
 
 void OTAClass::init(char const *hostname, char const *password, uint16_t port)
 {
@@ -51,3 +54,5 @@ void OTAClass::init(char const *hostname, char const *password, uint16_t port)
 }
 
 OTAClass OTA;
+
+} // namespace ESPEssentials

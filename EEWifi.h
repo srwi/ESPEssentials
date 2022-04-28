@@ -1,14 +1,16 @@
-#ifndef ESPESSENTIALS_WIFI_H
-#define ESPESSENTIALS_WIFI_H
+#pragma once
 
 #include <WiFiManager.h>
 
-class WifiClass : public WiFiManager
+namespace ESPEssentials
+{
+
+class EEWifiClass : public WiFiManager
 {
 	public:
-		WifiClass();
+		EEWifiClass();
 };
 
-extern WifiClass Wifi;
+extern EEWifiClass EEWifi;
 
-#endif
+} // namespace ESPEssentials

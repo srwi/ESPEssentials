@@ -1,8 +1,13 @@
-#include "Wifi.h"
+#include "EEWifi.h"
 
-WifiClass::WifiClass()
+namespace ESPEssentials
+{
+
+EEWifiClass::EEWifiClass()
 {
 	setConfigPortalBlocking(false);
 }
 
-WifiClass Wifi;
+EEWifiClass EEWifi;
+
+} // namespace ESPEssentials

@@ -1,30 +1,35 @@
 #include "ESPEssentials.h"
 
-#include "Wifi.h"
-#include "OTA.h"
-#include "SerialOut.h"
-#include "WebServer.h"
+#include "EEOTA.h"
+#include "EESerialOut.h"
+#include "EEWebServer.h"
+#include "EEWifi.h"
 
-void handleESPEssentials()
+namespace ESPEssentials
 {
-	Wifi.process();
-	WebServer.handleClient();
+
+void handle()
+{
+	EEWifi.process();
+	EEWebServer.handleClient();
 	OTA.handle();
 }
 
-void initESPEssentials(String projectName, int baudRate, String otaPassword)
+void init(String projectName, int baudRate, String otaPassword)
 {
 	Serial.begin(baudRate);
 	PRINTLN("");
 
-	if(Wifi.autoConnect((projectName + " Setup").c_str()))
+	if(EEWifi.autoConnect((projectName + " Setup").c_str()))
 	{
-		WebServer.init();
+		EEWebServer.init();
 		OTA.init(projectName.c_str(), otaPassword.c_str());
 	}
 }
 
-void initESPEssentials(String projectName, String otaPassword)
+void init(String projectName, String otaPassword)
 {
-	initESPEssentials(projectName, ESSENTIALS_BAUD, otaPassword);
+	init(projectName, ESSENTIALS_BAUD, otaPassword);
 }
+
+} // namespace ESPEssentials
