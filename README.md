@@ -3,7 +3,7 @@
 [![arduino-library-badge](https://www.ardu-badge.com/badge/ESPEssentials.svg?)](https://www.ardu-badge.com/ESPEssentials)
 [![LGPL-2.1 license](https://img.shields.io/github/license/stnkl/ESPEssentials)](https://github.com/stnkl/ESPEssentials/blob/master/LICENSE)
 
-Essentials for the ESP8266 to get you started with your Arduino project without any of the annoying stuff.
+Essentials for the ESP8266 and ESP32 to get you started with your Arduino project without any of the annoying stuff.
 
 ## Features
 - Serial output
@@ -65,7 +65,7 @@ WebServer.on("/reset_wifi", HTTP_GET, [&]() {
 
 *Note:* The routes `/edit`, `/handle_update`, `/list`, `/reboot` and `/update` are already used by ESPEssentials and can not be used.
 
-To edit files inside your browser upload [`/data/edit.htm.gz`](https://github.com/stnkl/ESPEssentials/blob/master/data/edit.htm.gz) to the root directory. The easiest way to do this is by accessing `http://<device-ip>/edit` and uploading it from there. Afterwards you can access the file editor via the same URL to edit files directly on the ESP8266.
+To edit files inside your browser upload [`/data/edit.htm.gz`](https://github.com/stnkl/ESPEssentials/blob/master/data/edit.htm.gz) to the root directory. The easiest way to do this is by accessing `http://<device-ip>/edit` and uploading it from there. Afterwards you can access the file editor via the same URL to edit files directly on the ESP8266/ESP32.
 
 Each file created/uploaded that way can be accessed via the corresponding URL (e.g. `http://<device-ip>/myPage` to access `/myPage.htm`).
 
@@ -79,4 +79,4 @@ initESPEssentials("Project Name", "hunter2");
 
 ### Web firmware update
 
-Open `http://<device-ip>/update` and select a `.bin` file to upload a new firmware to the ESP8266 from within the web browser.
+Open `http://<device-ip>/update` and select a `.bin` file to upload a new firmware to the ESP8266/ESP32 from within the web browser.
