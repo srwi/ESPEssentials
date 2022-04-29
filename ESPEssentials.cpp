@@ -1,9 +1,6 @@
 #include "ESPEssentials.h"
 
-#include "EEOTA.h"
 #include "EESerialOut.h"
-#include "EEWebServer.h"
-#include "EEWifi.h"
 
 namespace ESPEssentials
 {

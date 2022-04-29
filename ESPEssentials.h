@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EEOTA.h"
+#include "EEWebServer.h"
 #include "EEWifi.h"
 
 #include <Arduino.h>

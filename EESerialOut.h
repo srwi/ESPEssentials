@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Arduino.h>
 
 #ifdef SERIAL_OUT_SILENT
