@@ -1,0 +1,45 @@
+name: Build examples
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        board:
+          - "nodemcuv2"
+          - "lolin32"
+        example:
+          - "examples/ESPEssentials.ino"
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v2
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    - name: Set up Python
+      uses: actions/setup-python@v2
+    - name: Install PlatformIO
+      run: |
+        python -m pip install --upgrade pip
+        pip install --upgrade platformio
+    - name: Install 3rd party dependencies
+      run: |
+        pio lib -g install \
+        https://github.com/tzapu/WiFiManager \
+        https://github.com/stnkl/ESPEssentials
+    - name: Run PlatformIO examples
+      run: pio ci --board=${{ matrix.board }}
+      env:
+        PLATFORMIO_CI_SRC: ${{ matrix.example }}
