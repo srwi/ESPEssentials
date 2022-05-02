@@ -1,6 +1,7 @@
 #include "EEWebServer.h"
 
 #include "EESerialOut.h"
+#include "EESuspendTimer.h"
 
 #if defined(ESP32)
 	#include <SPIFFS.h>
@@ -27,11 +28,14 @@ EEWebServerClass::EEWebServerClass(int port = 80)
 
 void EEWebServerClass::init()
 {
+	SUSPEND_TIMER1;
 	if (!SPIFFS.begin())
 	{
+		RESUME_TIMER1;
 		PRINTLN("[Storage] Couldn't mount file system.");
 		return;
 	}
+	RESUME_TIMER1;
 
 	on("/edit", HTTP_GET, [&]()
 	{
@@ -127,6 +131,7 @@ bool EEWebServerClass::handleFileRead(String path)
 	String contentType = getContentType(path);
 	String pathWithGz = path + ".gz";
 
+	SUSPEND_TIMER1;
 	if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path))
 	{
 		if(SPIFFS.exists(pathWithGz))
@@ -136,10 +141,12 @@ bool EEWebServerClass::handleFileRead(String path)
 		streamFile(file, contentType);
 		file.close();
 
+		RESUME_TIMER1;
 		webserverBusy = false;
 		return true;
 	}
 
+	RESUME_TIMER1;
 	webserverBusy = false;
 	return false;
 }
@@ -158,6 +165,7 @@ void EEWebServerClass::handleFileUpload()
 			filename = "/" + filename;
 		PRINTLN("[Storage] Uploading file: " + filename);
 
+		SUSPEND_TIMER1;
 		fsUploadFile = SPIFFS.open(filename, "w");
 		filename = String();
 	}
@@ -170,6 +178,7 @@ void EEWebServerClass::handleFileUpload()
 	{
 		if(fsUploadFile)
 			fsUploadFile.close();
+		RESUME_TIMER1;
 		PRINTLN("[Storage] Received total: " + formatBytes(_upload.totalSize));
 	}
 }
@@ -184,10 +193,16 @@ void EEWebServerClass::handleFileDelete()
 
 	if(path == "/")
 		return send(500, "text/plain", "BAD PATH");
+
+	SUSPEND_TIMER1;
 	if(!SPIFFS.exists(path))
+	{
+		RESUME_TIMER1;
 		return send(404, "text/plain", "Oops, file not found (3)!");
+	}
 
 	SPIFFS.remove(path);
+	RESUME_TIMER1;
 
 	send(200, "text/plain", "");
 	path = String();
@@ -203,10 +218,16 @@ void EEWebServerClass::handleFileCreate()
 
 	if(path == "/")
 		return send(500, "text/plain", "BAD PATH");
+
+	SUSPEND_TIMER1;
 	if(SPIFFS.exists(path))
+	{
+		RESUME_TIMER1;
 		return send(500, "text/plain", "File already exists!");
+	}
 
 	File file = SPIFFS.open(path, "w");
+	RESUME_TIMER1;
 
 	if(file)
 		file.close();
@@ -225,6 +246,7 @@ void EEWebServerClass::handleFileList()
 		return;
 	}
 
+	SUSPEND_TIMER1;
 #if defined(ESP32)
 	String path = arg("dir");
 	File dir = SPIFFS.open(path);
@@ -267,7 +289,7 @@ void EEWebServerClass::handleFileList()
 	}
 	output += "]";
 #endif
-
+	RESUME_TIMER1;
 	send(200, "text/json", output);
 }
 
