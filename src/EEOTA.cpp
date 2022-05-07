@@ -13,19 +13,23 @@ void OTAClass::init(char const *hostname, char const *password, uint16_t port)
 	if(port)
 		setPort(port);
 
-	onStart([]()
+	m_isBusy = false;
+
+	onStart([&]()
 	{
 		PRINTLN("[OTA] Start");
+		m_isBusy = true;
 	});
-	onEnd([]()
+	onEnd([&]()
 	{
 		PRINTLN("\n[OTA] End");
+		m_isBusy = false;
 	});
 	onProgress([](unsigned int progress, unsigned int total)
 	{
 		PRINTF("[OTA] Progress: %u%%\r", (progress / (total / 100)));
 	});
-	onError([](ota_error_t error)
+	onError([&](ota_error_t error)
 	{
 		PRINTF("[OTA] Error[%u]: ", error);
 
@@ -47,10 +51,17 @@ void OTAClass::init(char const *hostname, char const *password, uint16_t port)
 				PRINTLN("End Failed");
 				break;
 		}
+
+		m_isBusy = false;
 	});
 
 	begin();
 	PRINTLN("[OTA] OTA started");
+}
+
+bool OTAClass::isBusy()
+{
+	return m_isBusy;
 }
 
 OTAClass OTA;
