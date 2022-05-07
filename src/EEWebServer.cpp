@@ -3,12 +3,22 @@
 #include "EESerialOut.h"
 
 #if defined(ESP32)
-	#include <SPIFFS.h>
 	#include <Update.h>
 	#include <WiFi.h>
 #elif defined(ESP8266)
 	#include <ESP8266WiFi.h>
-	#include <FS.h>
+#endif
+
+#if defined(USE_SPIFFS)
+  #if defined(ESP32)
+    #include <SPIFFS.h>
+  #elif defined(ESP8266)
+    #include <FS.h>
+  #endif
+  #define FILESYSTEM SPIFFS
+#else
+  #include <LittleFS.h>
+  #define FILESYSTEM LittleFS
 #endif
 
 #include <WiFiUdp.h>
@@ -27,7 +37,7 @@ EEWebServerClass::EEWebServerClass(int port = 80)
 
 void EEWebServerClass::init()
 {
-	if (!SPIFFS.begin())
+	if (!FILESYSTEM.begin())
 	{
 		PRINTLN("[Storage] Couldn't mount file system.");
 		return;
@@ -38,7 +48,7 @@ void EEWebServerClass::init()
 		if(!handleFileRead("/edit.htm"))
 		{
 			String content	=	"<form method='post' enctype='multipart/form-data'>";
-			content			+=		"<label>Upload a file (e.g. <i>edit.htm.gz</i>) to SPIFFS:";
+			content			+=		"<label>Upload a file (e.g. <i>edit.htm.gz</i>) to flash storage:";
 			content			+=			"<input name='datei' type='file'>";
 			content			+=		"</label>";
 			content			+=		"<button>Upload!</button>";
@@ -127,12 +137,12 @@ bool EEWebServerClass::handleFileRead(String path)
 	String contentType = getContentType(path);
 	String pathWithGz = path + ".gz";
 
-	if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path))
+	if(FILESYSTEM.exists(pathWithGz) || FILESYSTEM.exists(path))
 	{
-		if(SPIFFS.exists(pathWithGz))
+		if(FILESYSTEM.exists(pathWithGz))
 			path += ".gz";
 
-		File file = SPIFFS.open(path, "r");
+		File file = FILESYSTEM.open(path, "r");
 		streamFile(file, contentType);
 		file.close();
 
@@ -158,7 +168,7 @@ void EEWebServerClass::handleFileUpload()
 			filename = "/" + filename;
 		PRINTLN("[Storage] Uploading file: " + filename);
 
-		fsUploadFile = SPIFFS.open(filename, "w");
+		fsUploadFile = FILESYSTEM.open(filename, "w");
 		filename = String();
 	}
 	else if(_upload.status == UPLOAD_FILE_WRITE)
@@ -184,10 +194,10 @@ void EEWebServerClass::handleFileDelete()
 
 	if(path == "/")
 		return send(500, "text/plain", "BAD PATH");
-	if(!SPIFFS.exists(path))
+	if(!FILESYSTEM.exists(path))
 		return send(404, "text/plain", "Oops, file not found (3)!");
 
-	SPIFFS.remove(path);
+	FILESYSTEM.remove(path);
 
 	send(200, "text/plain", "");
 	path = String();
@@ -203,10 +213,10 @@ void EEWebServerClass::handleFileCreate()
 
 	if(path == "/")
 		return send(500, "text/plain", "BAD PATH");
-	if(SPIFFS.exists(path))
+	if(FILESYSTEM.exists(path))
 		return send(500, "text/plain", "File already exists!");
 
-	File file = SPIFFS.open(path, "w");
+	File file = FILESYSTEM.open(path, "w");
 
 	if(file)
 		file.close();
@@ -227,7 +237,7 @@ void EEWebServerClass::handleFileList()
 
 #if defined(ESP32)
 	String path = arg("dir");
-	File dir = SPIFFS.open(path);
+	File dir = FILESYSTEM.open(path);
 	path = String();
 
 	String output = "[";
@@ -249,7 +259,7 @@ void EEWebServerClass::handleFileList()
 	output += "]";
 #elif defined(ESP8266)
 	String path = arg("dir");
-	Dir dir = SPIFFS.openDir(path);
+	Dir dir = FILESYSTEM.openDir(path);
 	path = String();
 
 	String output = "[";
