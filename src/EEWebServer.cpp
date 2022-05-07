@@ -1,6 +1,7 @@
 #include "EEWebServer.h"
 
 #include "EESerialOut.h"
+#include "EESuspendTimerGuard.h"
 
 #if defined(ESP32)
 	#include <Update.h>
@@ -37,11 +38,13 @@ EEWebServerClass::EEWebServerClass(int port = 80)
 
 void EEWebServerClass::init()
 {
+	SUSPEND_TIMER1();
 	if (!FILESYSTEM.begin())
 	{
 		PRINTLN("[Storage] Couldn't mount file system.");
 		return;
 	}
+	RESUME_TIMER1();
 
 	on("/edit", HTTP_GET, [&]()
 	{
@@ -137,6 +140,7 @@ bool EEWebServerClass::handleFileRead(String path)
 	String contentType = getContentType(path);
 	String pathWithGz = path + ".gz";
 
+	SUSPEND_TIMER1();
 	if(FILESYSTEM.exists(pathWithGz) || FILESYSTEM.exists(path))
 	{
 		if(FILESYSTEM.exists(pathWithGz))
@@ -161,6 +165,7 @@ void EEWebServerClass::handleFileUpload()
 
 	HTTPUpload& _upload = upload();
 
+	SUSPEND_TIMER1();
 	if(_upload.status == UPLOAD_FILE_START)
 	{
 		String filename = _upload.filename;
@@ -194,6 +199,8 @@ void EEWebServerClass::handleFileDelete()
 
 	if(path == "/")
 		return send(500, "text/plain", "BAD PATH");
+
+	SUSPEND_TIMER1();
 	if(!FILESYSTEM.exists(path))
 		return send(404, "text/plain", "Oops, file not found (3)!");
 
@@ -213,8 +220,12 @@ void EEWebServerClass::handleFileCreate()
 
 	if(path == "/")
 		return send(500, "text/plain", "BAD PATH");
+
+	SUSPEND_TIMER1();
 	if(FILESYSTEM.exists(path))
+	{
 		return send(500, "text/plain", "File already exists!");
+	}
 
 	File file = FILESYSTEM.open(path, "w");
 
@@ -223,8 +234,8 @@ void EEWebServerClass::handleFileCreate()
 	else
 		return send(500, "text/plain", "Oops, creating file failed!");
 
-	send(200, "text/plain", "");
 	path = String();
+	send(200, "text/plain", "");
 }
 
 void EEWebServerClass::handleFileList()
@@ -235,6 +246,7 @@ void EEWebServerClass::handleFileList()
 		return;
 	}
 
+	SUSPEND_TIMER1();
 #if defined(ESP32)
 	String path = arg("dir");
 	File dir = FILESYSTEM.open(path);
@@ -277,7 +289,6 @@ void EEWebServerClass::handleFileList()
 	}
 	output += "]";
 #endif
-
 	send(200, "text/json", output);
 }
 
