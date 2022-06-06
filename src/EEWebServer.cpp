@@ -11,15 +11,15 @@
 #endif
 
 #if defined(USE_SPIFFS)
-  #if defined(ESP32)
-    #include <SPIFFS.h>
-  #elif defined(ESP8266)
-    #include <FS.h>
-  #endif
-  #define FILESYSTEM SPIFFS
+	#if defined(ESP32)
+		#include <SPIFFS.h>
+	#elif defined(ESP8266)
+		#include <FS.h>
+	#endif
+	#define FILESYSTEM SPIFFS
 #else
-  #include <LittleFS.h>
-  #define FILESYSTEM LittleFS
+	#include <LittleFS.h>
+	#define FILESYSTEM LittleFS
 #endif
 
 #include <WiFiUdp.h>
@@ -202,7 +202,7 @@ void EEWebServerClass::handleFileDelete()
 
 	SUSPEND_TIMER1();
 	if(!FILESYSTEM.exists(path))
-		return send(404, "text/plain", "Oops, file not found (3)!");
+		return send(404, "text/plain", "Oops, file not found!");
 
 	FILESYSTEM.remove(path);
 
@@ -261,7 +261,7 @@ void EEWebServerClass::handleFileList()
 			if (output != "[") output += ',';
 			bool isDir = false;
 			output += "{\"type\":\"";
-			output += (isDir)?"dir":"file";
+			output += (isDir) ? "dir" : "file";
 			output += "\",\"name\":\"";
 			output += String(file.path()).substring(1);
 			output += "\"}";
@@ -281,9 +281,13 @@ void EEWebServerClass::handleFileList()
 		if (output != "[") output += ',';
 		bool isDir = false;
 		output += "{\"type\":\"";
-		output += (isDir)?"dir":"file";
+		output += (isDir) ? "dir" : "file";
 		output += "\",\"name\":\"";
-		output += String(entry.name()).substring(1);
+		String name = String(entry.name());
+		if (name.startsWith("/"))
+			output += name.substring(1);
+		else
+			output += name;
 		output += "\"}";
 		entry.close();
 	}
