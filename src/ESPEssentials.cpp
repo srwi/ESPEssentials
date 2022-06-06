@@ -12,21 +12,21 @@ void handle()
 	OTA.handle();
 }
 
-void init(String projectName, int baudRate, String otaPassword)
+void init(String projectName, int baudRate, String updatePassword)
 {
 	Serial.begin(baudRate);
 	PRINTLN("");
 
 	if(Wifi.autoConnect((projectName + " Setup").c_str()))
 	{
-		WebServer.init();
-		OTA.init(projectName.c_str(), otaPassword.c_str());
+		WebServer.init(updatePassword);
+		OTA.init(projectName.c_str(), updatePassword.c_str());
 	}
 }
 
-void init(String projectName, String otaPassword)
+void init(String projectName, String updatePassword)
 {
-	init(projectName, ESSENTIALS_BAUD, otaPassword);
+	init(projectName, ESSENTIALS_BAUD, updatePassword);
 }
 
 } // namespace ESPEssentials

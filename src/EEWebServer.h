@@ -3,14 +3,18 @@
 #include <Arduino.h>
 
 #if defined(ESP32)
-	#include <WebServer.h>
 	#include <FS.h>
+	#include <HTTPUpdateServer.h>
+	#include <WebServer.h>
 
 	typedef WebServer EEBaseWebServerClass;
+	typedef HTTPUpdateServer HTTPUpdateServerType;
 #elif defined(ESP8266)
+	#include <ESP8266HTTPUpdateServer.h>
 	#include <ESP8266WebServer.h>
 
 	typedef ESP8266WebServer EEBaseWebServerClass;
+	typedef ESP8266HTTPUpdateServer HTTPUpdateServerType;
 #endif
 
 namespace ESPEssentials
@@ -20,7 +24,7 @@ class EEWebServerClass : public EEBaseWebServerClass
 {
 	public:
 		EEWebServerClass(int port);
-		void init();
+		void init(String updatePassword = "");
 		bool handleFileRead(String path);
 		bool isBusy();
 
@@ -30,8 +34,8 @@ class EEWebServerClass : public EEBaseWebServerClass
 		THandlerFunction _handle_file_delete;
 		THandlerFunction _handle_file_list;
 		THandlerFunction _handle_file_upload;
-		THandlerFunction _handle_update;
 		bool webserverBusy = false;
+		HTTPUpdateServerType httpUpdater;
 
 		String formatBytes(size_t bytes);
 		String getContentType(String filename);
@@ -39,7 +43,6 @@ class EEWebServerClass : public EEBaseWebServerClass
 		void handleFileDelete();
 		void handleFileCreate();
 		void handleFileList();
-		void handleUpdate();
 };
 
 extern EEWebServerClass WebServer;

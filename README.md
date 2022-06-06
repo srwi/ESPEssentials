@@ -81,4 +81,4 @@ ESPEssentials::init("Project Name", "hunter2");
 
 ### Web firmware update
 
-Open `http://<device-ip>/update` and select a `.bin` file to upload a new firmware to the ESP8266/ESP32 from within the web browser.
+Open `http://<device-ip>/update` and select a `.bin` file to upload a new firmware to the ESP8266/ESP32 from within the web browser. If a password has been supplied to `init` you will be asked to authenticate. The username is `admin`.

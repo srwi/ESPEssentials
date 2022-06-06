@@ -12,7 +12,7 @@ namespace ESPEssentials
 {
 
 void handle();
-void init(String projectName, int baudRate = ESSENTIALS_BAUD, String otaPassword = "");
-void init(String projectName, String otaPassword);
+void init(String projectName, int baudRate = ESSENTIALS_BAUD, String updatePassword = "");
+void init(String projectName, String updatePassword);
 
 } // namespace ESPEssentials
