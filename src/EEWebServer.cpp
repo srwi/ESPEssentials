@@ -38,7 +38,11 @@ EEWebServerClass::EEWebServerClass(int port = 80)
 void EEWebServerClass::init(String updatePassword)
 {
 	SUSPEND_TIMER1();
+#if defined(ESP32)
 	if (!FILESYSTEM.begin(true))
+#elif defined(ESP8266)
+	if (!FILESYSTEM.begin())
+#endif
 	{
 		PRINTLN("[Storage] Couldn't mount file system.");
 		return;
