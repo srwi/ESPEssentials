@@ -38,7 +38,7 @@ EEWebServerClass::EEWebServerClass(int port = 80)
 void EEWebServerClass::init(String updatePassword)
 {
 	SUSPEND_TIMER1();
-	if (!FILESYSTEM.begin())
+	if (!FILESYSTEM.begin(true))
 	{
 		PRINTLN("[Storage] Couldn't mount file system.");
 		return;
