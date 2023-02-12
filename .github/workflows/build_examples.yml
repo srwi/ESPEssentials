@@ -38,7 +38,7 @@ jobs:
       run: |
         pio lib -g install \
         https://github.com/tzapu/WiFiManager \
-        https://github.com/stnkl/ESPEssentials
+        https://github.com/srwi/ESPEssentials
     - name: Run PlatformIO examples
       run: pio ci --board=${{ matrix.board }}
       env:

@@ -3,7 +3,7 @@
 ![ESP8266](https://img.shields.io/badge/ESP-8266-000000.svg?colorB=blue)
 ![ESP32](https://img.shields.io/badge/ESP-32-000000.svg?colorB=blue)
 [![arduino-library-badge](https://www.ardu-badge.com/badge/ESPEssentials.svg)](https://www.ardu-badge.com/ESPEssentials)
-[![LGPL-2.1 license](https://img.shields.io/github/license/stnkl/ESPEssentials)](https://github.com/stnkl/ESPEssentials/blob/master/LICENSE)
+[![LGPL-2.1 license](https://img.shields.io/github/license/srwi/ESPEssentials)](https://github.com/srwi/ESPEssentials/blob/master/LICENSE)
 
 Essentials for the ESP8266 and ESP32 to get you started with your Arduino project without any of the annoying stuff.
 
@@ -67,7 +67,7 @@ ESPEssentials::WebServer.on("/reset_wifi", HTTP_GET, [&]() {
 
 *Note:* The routes `/edit`, `/handle_update`, `/list`, `/reboot` and `/update` are already used by ESPEssentials and can not be used.
 
-To edit files inside your browser upload [`/data/edit.htm.gz`](https://github.com/stnkl/ESPEssentials/blob/master/data/edit.htm.gz) to the root directory. The easiest way to do this is by accessing `http://<device-ip>/edit` and uploading it from there. Afterwards you can access the file editor via the same URL to edit files directly on the device.
+To edit files inside your browser upload [`/data/edit.htm.gz`](https://github.com/srwi/ESPEssentials/blob/master/data/edit.htm.gz) to the root directory. The easiest way to do this is by accessing `http://<device-ip>/edit` and uploading it from there. Afterwards you can access the file editor via the same URL to edit files directly on the device.
 
 Each file created/uploaded that way can be accessed via the corresponding URL (e.g. `http://<device-ip>/myPage` to access `/myPage.htm`).
 

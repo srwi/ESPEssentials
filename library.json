@@ -4,7 +4,7 @@
   "repository":
   {
     "type": "git",
-    "url": "https://github.com/stnkl/ESPEssentials.git"
+    "url": "https://github.com/srwi/ESPEssentials.git"
   },
   "frameworks": "arduino",
   "platforms":
@@ -16,7 +16,7 @@
   {
     "name": "Stephan Rumswinkel",
     "maintainer": true,
-    "url": "https://github.com/stnkl"
+    "url": "https://github.com/srwi"
   },
   "version": "2.1.4"
 }
