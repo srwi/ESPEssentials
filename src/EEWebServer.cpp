@@ -66,7 +66,7 @@ void EEWebServerClass::init(String updatePassword)
 	on("/edit", HTTP_DELETE, _handle_file_delete);
 	on("/edit", HTTP_POST, [&]() { send(200, "text/plain", ""); }, _handle_file_upload);
 	on("/list", HTTP_GET, _handle_file_list);
-	on("reboot", HTTP_GET, [&]()
+	on("/reboot", HTTP_GET, [&]()
 	{
 		send(200, "text/plain", "Rebooting...");
 		delay(200);
